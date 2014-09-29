@@ -233,6 +233,8 @@ double FabMap::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {
 		double logP = 0;
 		bool zq, zpq;
 		if(flags & NAIVE_BAYES) {
+			// naive bayes model to compute P(Z|L)
+			// wow test git
 			for (int q = 0; q < clTree.cols; q++) {
 				zq = queryImgDescriptor.at<float>(0,q) > 0;
 

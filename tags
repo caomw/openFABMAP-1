@@ -1,0 +1,154 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BOWMSCTrainer	include/openfabmap.hpp	/^class BOWMSCTrainer: public cv::BOWTrainer {$/;"	c	namespace:of2
+BOWMSCTrainer	src/BOWMSCTrainer.cpp	/^BOWMSCTrainer::BOWMSCTrainer(double _clusterSize) :$/;"	f	class:of2::BOWMSCTrainer
+CHOW_LIU	include/openfabmap.hpp	/^		CHOW_LIU = 8,$/;"	e	enum:of2::FabMap::__anon1
+CP	src/ChowLiuTree.cpp	/^double ChowLiuTree::CP(int a, bool za, int b, bool zb){$/;"	f	class:of2::ChowLiuTree
+ChowLiuTree	include/openfabmap.hpp	/^class ChowLiuTree {$/;"	c	namespace:of2
+ChowLiuTree	src/ChowLiuTree.cpp	/^ChowLiuTree::ChowLiuTree() {$/;"	f	class:of2::ChowLiuTree
+FabMap	include/openfabmap.hpp	/^class FabMap {$/;"	c	namespace:of2
+FabMap	src/FabMap.cpp	/^FabMap::FabMap(const Mat& _clTree, double _PzGe,$/;"	f	class:of2::FabMap
+FabMap1	include/openfabmap.hpp	/^class FabMap1: public FabMap {$/;"	c	namespace:of2
+FabMap1	src/FabMap.cpp	/^FabMap1::FabMap1(const Mat& _clTree, double _PzGe, double _PzGNe, int _flags,$/;"	f	class:of2::FabMap1
+FabMap2	include/openfabmap.hpp	/^class FabMap2: public FabMap {$/;"	c	namespace:of2
+FabMap2	src/FabMap.cpp	/^FabMap2::FabMap2(const Mat& _clTree, double _PzGe, double _PzGNe,$/;"	f	class:of2::FabMap2
+FabMapFBO	include/openfabmap.hpp	/^class FabMapFBO: public FabMap {$/;"	c	namespace:of2
+FabMapFBO	src/FabMap.cpp	/^FabMapFBO::FabMapFBO(const Mat& _clTree, double _PzGe, double _PzGNe,$/;"	f	class:of2::FabMapFBO
+FabMapLUT	include/openfabmap.hpp	/^class FabMapLUT: public FabMap {$/;"	c	namespace:of2
+FabMapLUT	src/FabMap.cpp	/^FabMapLUT::FabMapLUT(const Mat& _clTree, double _PzGe, double _PzGNe,$/;"	f	class:of2::FabMapLUT
+IMatch	include/openfabmap.hpp	/^	IMatch() :$/;"	f	struct:of2::IMatch
+IMatch	include/openfabmap.hpp	/^	IMatch(int _queryIdx, int _imgIdx, double _likelihood, double _match) :$/;"	f	struct:of2::IMatch
+IMatch	include/openfabmap.hpp	/^struct IMatch {$/;"	s	namespace:of2
+JP	src/ChowLiuTree.cpp	/^double ChowLiuTree::JP(int a, bool za, int b, bool zb) {$/;"	f	class:of2::ChowLiuTree
+M	include/openfabmap.hpp	/^		mutable double M;$/;"	m	struct:of2::FabMapFBO::WordStats
+MEAN_FIELD	include/openfabmap.hpp	/^		MEAN_FIELD = 1,$/;"	e	enum:of2::FabMap::__anon1
+MOTION_MODEL	include/openfabmap.hpp	/^		MOTION_MODEL = 16$/;"	e	enum:of2::FabMap::__anon1
+NAIVE_BAYES	include/openfabmap.hpp	/^		NAIVE_BAYES = 4,$/;"	e	enum:of2::FabMap::__anon1
+OPENFABMAP_H_	include/openfabmap.hpp	30;"	d
+P	src/ChowLiuTree.cpp	/^double ChowLiuTree::P(int a, bool za) {$/;"	f	class:of2::ChowLiuTree
+PeqGL	src/FabMap.cpp	/^double FabMap::PeqGL(int q, bool Lzq, bool eq) {$/;"	f	class:of2::FabMap
+Pnew	include/openfabmap.hpp	/^	double Pnew;$/;"	m	class:of2::FabMap
+PsGd	include/openfabmap.hpp	/^	double PsGd;$/;"	m	class:of2::FabMapFBO
+PzGL	include/openfabmap.hpp	/^	double (FabMap::*PzGL)(int q, bool zq, bool zpq, bool Lzq);$/;"	m	class:of2::FabMap
+PzGNe	include/openfabmap.hpp	/^	double PzGNe;$/;"	m	class:of2::FabMap
+PzGe	include/openfabmap.hpp	/^	double PzGe;$/;"	m	class:of2::FabMap
+Pzq	src/FabMap.cpp	/^double FabMap::Pzq(int q, bool zq) {$/;"	f	class:of2::FabMap
+PzqGL	src/FabMap.cpp	/^double FabMap::PzqGL(int q, bool zq, bool zpq, bool Lzq) {$/;"	f	class:of2::FabMap
+PzqGeq	src/FabMap.cpp	/^double FabMap::PzqGeq(bool zq, bool eq) {$/;"	f	class:of2::FabMap
+PzqGzpq	src/FabMap.cpp	/^double FabMap::PzqGzpq(int q, bool zq, bool zpq) {$/;"	f	class:of2::FabMap
+PzqGzpqL	src/FabMap.cpp	/^double FabMap::PzqGzpqL(int q, bool zq, bool zpq, bool Lzq) {$/;"	f	class:of2::FabMap
+SAMPLED	include/openfabmap.hpp	/^		SAMPLED = 2,$/;"	e	enum:of2::FabMap::__anon1
+V	include/openfabmap.hpp	/^		mutable double V;$/;"	m	struct:of2::FabMapFBO::WordStats
+WordStats	include/openfabmap.hpp	/^		WordStats() :$/;"	f	struct:of2::FabMapFBO::WordStats
+WordStats	include/openfabmap.hpp	/^		WordStats(int _q, double _info) :$/;"	f	struct:of2::FabMapFBO::WordStats
+WordStats	include/openfabmap.hpp	/^	struct WordStats {$/;"	s	class:of2::FabMapFBO
+add	include/openfabmap.hpp	/^	void add(const cv::Mat& queryImgDescriptors) {$/;"	f	class:of2::FabMap2
+add	src/ChowLiuTree.cpp	/^void ChowLiuTree::add(const Mat& imgDescriptor) {$/;"	f	class:of2::ChowLiuTree
+add	src/ChowLiuTree.cpp	/^void ChowLiuTree::add(const vector<Mat>& imgDescriptors) {$/;"	f	class:of2::ChowLiuTree
+add	src/FabMap.cpp	/^void FabMap2::add(const vector<Mat>& queryImgDescriptors) {$/;"	f	class:of2::FabMap2
+add	src/FabMap.cpp	/^void FabMap::add(const cv::Mat& queryImgDescriptor) {$/;"	f	class:of2::FabMap
+add	src/FabMap.cpp	/^void FabMap::add(const std::vector<cv::Mat>& queryImgDescriptors) {$/;"	f	class:of2::FabMap
+addToIndex	src/FabMap.cpp	/^void FabMap2::addToIndex(const Mat& queryImgDescriptor,$/;"	f	class:of2::FabMap2
+addTraining	include/openfabmap.hpp	/^	void addTraining(const cv::Mat& queryImgDescriptors) {$/;"	f	class:of2::FabMap2
+addTraining	src/FabMap.cpp	/^void FabMap2::addTraining(const vector<Mat>& queryImgDescriptors) {$/;"	f	class:of2::FabMap2
+addTraining	src/FabMap.cpp	/^void FabMap::addTraining(const Mat& queryImgDescriptor) {$/;"	f	class:of2::FabMap
+addTraining	src/FabMap.cpp	/^void FabMap::addTraining(const vector<Mat>& queryImgDescriptors) {$/;"	f	class:of2::FabMap
+bennettInequality	src/FabMap.cpp	/^double FabMapFBO::bennettInequality(double v, double m, double delta) {$/;"	f	class:of2::FabMapFBO
+bisectionIts	include/openfabmap.hpp	/^	int bisectionIts;$/;"	m	class:of2::FabMapFBO
+bisectionStart	include/openfabmap.hpp	/^	int bisectionStart;$/;"	m	class:of2::FabMapFBO
+buildTree	src/ChowLiuTree.cpp	/^cv::Mat ChowLiuTree::buildTree(int root_word, list<info> &edges) {$/;"	f	class:of2::ChowLiuTree
+calcMutInfo	src/ChowLiuTree.cpp	/^double ChowLiuTree::calcMutInfo(int word1, int word2) {$/;"	f	class:of2::ChowLiuTree
+children	include/openfabmap.hpp	/^	std::vector<std::vector<int> > children;$/;"	m	class:of2::FabMap2
+clTree	include/openfabmap.hpp	/^	cv::Mat clTree;$/;"	m	class:of2::FabMap
+cluster	src/BOWMSCTrainer.cpp	/^Mat BOWMSCTrainer::cluster() const {$/;"	f	class:of2::BOWMSCTrainer
+cluster	src/BOWMSCTrainer.cpp	/^Mat BOWMSCTrainer::cluster(const Mat& descriptors) const {$/;"	f	class:of2::BOWMSCTrainer
+clusterSize	include/openfabmap.hpp	/^	double clusterSize;$/;"	m	class:of2::BOWMSCTrainer
+compInfo	src/FabMap.cpp	/^bool FabMapFBO::compInfo(const WordStats& first, const WordStats& second) {$/;"	f	class:of2::FabMapFBO
+compare	src/FabMap.cpp	/^void FabMap::compare(const Mat& queryImgDescriptor,$/;"	f	class:of2::FabMap
+compare	src/FabMap.cpp	/^void FabMap::compare(const vector<Mat>& queryImgDescriptors, vector<$/;"	f	class:of2::FabMap
+compare	src/FabMap.cpp	/^void FabMap::compare(const vector<Mat>& queryImgDescriptors,$/;"	f	class:of2::FabMap
+compareImgDescriptor	src/FabMap.cpp	/^void FabMap::compareImgDescriptor(const Mat& queryImgDescriptor,$/;"	f	class:of2::FabMap
+createBaseEdges	src/ChowLiuTree.cpp	/^void ChowLiuTree::createBaseEdges(list<info>& edges, double infoThreshold) {$/;"	f	class:of2::ChowLiuTree
+d1	include/openfabmap.hpp	/^	std::vector<double> d1, d2, d3, d4;$/;"	m	class:of2::FabMap2
+d2	include/openfabmap.hpp	/^	std::vector<double> d1, d2, d3, d4;$/;"	m	class:of2::FabMap2
+d3	include/openfabmap.hpp	/^	std::vector<double> d1, d2, d3, d4;$/;"	m	class:of2::FabMap2
+d4	include/openfabmap.hpp	/^	std::vector<double> d1, d2, d3, d4;$/;"	m	class:of2::FabMap2
+drawRichKeypoints	samples/openFABMAPcli.cpp	/^void drawRichKeypoints(const cv::Mat& src, std::vector<cv::KeyPoint>& kpts, cv::Mat& dst) {$/;"	f
+extractChildren	src/ChowLiuTree.cpp	/^vector<int> ChowLiuTree::extractChildren(list<info> &remaining_edges, int q) {$/;"	f	class:of2::ChowLiuTree
+filterKeypoints	samples/openFABMAPcli.cpp	/^void filterKeypoints(std::vector<cv::KeyPoint>& kpts, int maxSize, int maxFeatures) {$/;"	f
+flags	include/openfabmap.hpp	/^	int flags;$/;"	m	class:of2::FabMap
+generateBOWImageDescs	samples/openFABMAPcli.cpp	/^int generateBOWImageDescs(std::string dataPath,$/;"	f
+generateDetector	samples/openFABMAPcli.cpp	/^cv::Ptr<cv::FeatureDetector> generateDetector(cv::FileStorage &fs) {$/;"	f
+generateExtractor	samples/openFABMAPcli.cpp	/^cv::Ptr<cv::DescriptorExtractor> generateExtractor(cv::FileStorage &fs)$/;"	f
+generateFABMAPInstance	samples/openFABMAPcli.cpp	/^of2::FabMap *generateFABMAPInstance(cv::FileStorage &settings)$/;"	f
+generateVocabTrainData	samples/openFABMAPcli.cpp	/^int generateVocabTrainData(std::string trainPath,$/;"	f
+getImgDescriptors	src/ChowLiuTree.cpp	/^const std::vector<cv::Mat>& ChowLiuTree::getImgDescriptors() const {$/;"	f	class:of2::ChowLiuTree
+getIndexLikelihoods	src/FabMap.cpp	/^void FabMap2::getIndexLikelihoods(const Mat& queryImgDescriptor,$/;"	f	class:of2::FabMap2
+getLikelihoods	src/FabMap.cpp	/^void FabMap1::getLikelihoods(const Mat& queryImgDescriptor,$/;"	f	class:of2::FabMap1
+getLikelihoods	src/FabMap.cpp	/^void FabMap2::getLikelihoods(const Mat& queryImgDescriptor,$/;"	f	class:of2::FabMap2
+getLikelihoods	src/FabMap.cpp	/^void FabMap::getLikelihoods(const Mat& queryImgDescriptor,$/;"	f	class:of2::FabMap
+getLikelihoods	src/FabMap.cpp	/^void FabMapFBO::getLikelihoods(const Mat& queryImgDescriptor,$/;"	f	class:of2::FabMapFBO
+getLikelihoods	src/FabMap.cpp	/^void FabMapLUT::getLikelihoods(const Mat& queryImgDescriptor,$/;"	f	class:of2::FabMapLUT
+getNewPlaceLikelihood	src/FabMap.cpp	/^double FabMap2::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {$/;"	f	class:of2::FabMap2
+getNewPlaceLikelihood	src/FabMap.cpp	/^double FabMap::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {$/;"	f	class:of2::FabMap
+getTestImgDescriptors	src/FabMap.cpp	/^const std::vector<cv::Mat>& FabMap::getTestImgDescriptors() const {$/;"	f	class:of2::FabMap
+getTrainingImgDescriptors	src/FabMap.cpp	/^const std::vector<cv::Mat>& FabMap::getTrainingImgDescriptors() const {$/;"	f	class:of2::FabMap
+help	samples/openFABMAPcli.cpp	/^int help(void)$/;"	f
+imgDescriptors	include/openfabmap.hpp	/^	std::vector<cv::Mat> imgDescriptors;$/;"	m	class:of2::ChowLiuTree
+imgIdx	include/openfabmap.hpp	/^	int imgIdx;		\/\/test index $/;"	m	struct:of2::IMatch
+info	include/openfabmap.hpp	/^		double info;$/;"	m	struct:of2::FabMapFBO::WordStats
+info	include/openfabmap.hpp	/^	typedef struct info {$/;"	s	class:of2::ChowLiuTree
+info	include/openfabmap.hpp	/^	} info;$/;"	t	class:of2::ChowLiuTree	typeref:struct:of2::ChowLiuTree::info
+likelihood	include/openfabmap.hpp	/^	double likelihood;	\/\/raw loglikelihood$/;"	m	struct:of2::IMatch
+limitbisection	src/FabMap.cpp	/^double FabMapFBO::limitbisection(double v, double m) {$/;"	f	class:of2::FabMapFBO
+logsumexp	src/FabMap.cpp	/^double logsumexp(double a, double b) {$/;"	f
+mBias	include/openfabmap.hpp	/^	double mBias;$/;"	m	class:of2::FabMap
+main	samples/openFABMAPcli.cpp	/^int main(int argc, char * argv[])$/;"	f
+make	src/ChowLiuTree.cpp	/^Mat ChowLiuTree::make(double infoThreshold) {$/;"	f	class:of2::ChowLiuTree
+match	include/openfabmap.hpp	/^	double match;		\/\/normalised probability$/;"	m	struct:of2::IMatch
+mergedImgDescriptors	include/openfabmap.hpp	/^	cv::Mat mergedImgDescriptors;$/;"	m	class:of2::ChowLiuTree
+normaliseDistribution	src/FabMap.cpp	/^void FabMap::normaliseDistribution(vector<IMatch>& matches) {$/;"	f	class:of2::FabMap
+numSamples	include/openfabmap.hpp	/^	int numSamples;$/;"	m	class:of2::FabMap
+of2	include/openfabmap.hpp	/^namespace of2 {$/;"	n
+of2	src/BOWMSCTrainer.cpp	/^namespace of2 {$/;"	n	file:
+of2	src/ChowLiuTree.cpp	/^namespace of2 {$/;"	n	file:
+of2	src/FabMap.cpp	/^namespace of2 {$/;"	n	file:
+openFABMAP	samples/openFABMAPcli.cpp	/^int openFABMAP(std::string testPath,$/;"	f
+operator <	include/openfabmap.hpp	/^		bool operator<(const WordStats& w) const {$/;"	f	struct:of2::FabMapFBO::WordStats
+operator <	include/openfabmap.hpp	/^	bool operator<(const IMatch& m) const {$/;"	f	struct:of2::IMatch
+pq	src/FabMap.cpp	/^int FabMap::pq(int q) {$/;"	f	class:of2::FabMap
+precision	include/openfabmap.hpp	/^	int precision;$/;"	m	class:of2::FabMapLUT
+priorMatches	include/openfabmap.hpp	/^	std::vector<IMatch> priorMatches;$/;"	m	class:of2::FabMap
+q	include/openfabmap.hpp	/^		int q;$/;"	m	struct:of2::FabMapFBO::WordStats
+queryIdx	include/openfabmap.hpp	/^	int queryIdx;	\/\/query index$/;"	m	struct:of2::IMatch
+recAddToTree	src/ChowLiuTree.cpp	/^void ChowLiuTree::recAddToTree(cv::Mat &cltree, int q, int pq, $/;"	f	class:of2::ChowLiuTree
+reduceEdgesToMinSpan	src/ChowLiuTree.cpp	/^bool ChowLiuTree::reduceEdgesToMinSpan(list<info>& edges) {$/;"	f	class:of2::ChowLiuTree
+rejectionThreshold	include/openfabmap.hpp	/^	double rejectionThreshold;$/;"	m	class:of2::FabMapFBO
+sFactor	include/openfabmap.hpp	/^	double sFactor;$/;"	m	class:of2::FabMap
+score	include/openfabmap.hpp	/^		float score;$/;"	m	struct:of2::ChowLiuTree::info
+setWordStatistics	src/FabMap.cpp	/^void FabMapFBO::setWordStatistics(const Mat& queryImgDescriptor,$/;"	f	class:of2::FabMapFBO
+showFeatures	samples/openFABMAPcli.cpp	/^int showFeatures(std::string trainPath, cv::Ptr<cv::FeatureDetector> &detector)$/;"	f
+sortInfoScores	src/ChowLiuTree.cpp	/^bool ChowLiuTree::sortInfoScores(const info& first, const info& second) {$/;"	f	class:of2::ChowLiuTree
+sortKeypoints	samples/openFABMAPcli.cpp	/^void sortKeypoints(std::vector<cv::KeyPoint>& keypoints) {$/;"	f
+table	include/openfabmap.hpp	/^	int (*table)[8];$/;"	m	class:of2::FabMapLUT
+testDefaults	include/openfabmap.hpp	/^	std::vector<double> testDefaults;$/;"	m	class:of2::FabMap2
+testImgDescriptors	include/openfabmap.hpp	/^	std::vector<cv::Mat> testImgDescriptors;$/;"	m	class:of2::FabMap
+testInvertedMap	include/openfabmap.hpp	/^	std::map<int, std::vector<int> > testInvertedMap;$/;"	m	class:of2::FabMap2
+trainChowLiuTree	samples/openFABMAPcli.cpp	/^int trainChowLiuTree(std::string chowliutreePath,$/;"	f
+trainVocabulary	samples/openFABMAPcli.cpp	/^int trainVocabulary(std::string vocabPath,$/;"	f
+trainingDefaults	include/openfabmap.hpp	/^	std::vector<double> trainingDefaults;$/;"	m	class:of2::FabMap2
+trainingImgDescriptors	include/openfabmap.hpp	/^	std::vector<cv::Mat> trainingImgDescriptors;$/;"	m	class:of2::FabMap
+trainingInvertedMap	include/openfabmap.hpp	/^	std::map<int, std::vector<int> > trainingInvertedMap;$/;"	m	class:of2::FabMap2
+word1	include/openfabmap.hpp	/^		short word1;$/;"	m	struct:of2::ChowLiuTree::info
+word2	include/openfabmap.hpp	/^		short word2;$/;"	m	struct:of2::ChowLiuTree::info
+~BOWMSCTrainer	src/BOWMSCTrainer.cpp	/^BOWMSCTrainer::~BOWMSCTrainer() {$/;"	f	class:of2::BOWMSCTrainer
+~ChowLiuTree	src/ChowLiuTree.cpp	/^ChowLiuTree::~ChowLiuTree() {$/;"	f	class:of2::ChowLiuTree
+~FabMap	src/FabMap.cpp	/^FabMap::~FabMap() {$/;"	f	class:of2::FabMap
+~FabMap1	src/FabMap.cpp	/^FabMap1::~FabMap1() {$/;"	f	class:of2::FabMap1
+~FabMap2	src/FabMap.cpp	/^FabMap2::~FabMap2() {$/;"	f	class:of2::FabMap2
+~FabMapFBO	src/FabMap.cpp	/^FabMapFBO::~FabMapFBO() {$/;"	f	class:of2::FabMapFBO
+~FabMapLUT	src/FabMap.cpp	/^FabMapLUT::~FabMapLUT() {$/;"	f	class:of2::FabMapLUT

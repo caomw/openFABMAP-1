@@ -100,6 +100,8 @@ double ChowLiuTree::P(int a, bool za) {
 	}
 
 }
+// compute the joint probability P( ea == za && eb = zb )
+// mergedImgDescriptors is a collection of image descriptors from all the images
 double ChowLiuTree::JP(int a, bool za, int b, bool zb) {
 
 	double count = 0;

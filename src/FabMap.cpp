@@ -242,6 +242,7 @@ double FabMap::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {
 						Pzq(q, true) * PzqGeq(zq, true));
 			}
 		} else {
+			// use Chow-Liu Tree to compute P(Z|L)
 			for (int q = 0; q < clTree.cols; q++) {
 				zq = queryImgDescriptor.at<float>(0,q) > 0;
 				zpq = queryImgDescriptor.at<float>(0,pq(q)) > 0;

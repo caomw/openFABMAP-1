@@ -26,6 +26,7 @@
  OpenFABMAP. If not, see http://www.gnu.org/licenses/.
 ------------------------------------------------------------------------*/
 
+// git test
 #include "../include/openfabmap.hpp"
 
 using std::vector;
@@ -125,6 +126,10 @@ void FabMap::compare(const Mat& queryImgDescriptor,
 	CV_Assert(!queryImgDescriptor.empty());
 	vector<Mat> queryImgDescriptors;
 	// very weird
+	// why copy queryImgDescriptor to 
+	//          queryImgDescriptors
+	// maybe the following called compare function would
+	// change its variables, namely, queriImgDescriptors
 	
 	for (int i = 0; i < queryImgDescriptor.rows; i++) {
 		queryImgDescriptors.push_back(queryImgDescriptor.row(i));
@@ -233,8 +238,6 @@ double FabMap::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {
 		double logP = 0;
 		bool zq, zpq;
 		if(flags & NAIVE_BAYES) {
-			// naive bayes model to compute P(Z|L)
-			// wow test git
 			for (int q = 0; q < clTree.cols; q++) {
 				zq = queryImgDescriptor.at<float>(0,q) > 0;
 
@@ -242,7 +245,6 @@ double FabMap::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {
 						Pzq(q, true) * PzqGeq(zq, true));
 			}
 		} else {
-			// use Chow-Liu Tree to compute P(Z|L)
 			for (int q = 0; q < clTree.cols; q++) {
 				zq = queryImgDescriptor.at<float>(0,q) > 0;
 				zpq = queryImgDescriptor.at<float>(0,pq(q)) > 0;

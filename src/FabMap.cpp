@@ -252,6 +252,7 @@ void FabMap::getLikelihoods(const Mat& queryImgDescriptor,
 }
 
 double FabMap::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {
+		// not sure about the MEAN_FIELD thing
 	if (flags & MEAN_FIELD) {
 		double logP = 0;
 		bool zq, zpq;
@@ -264,13 +265,14 @@ double FabMap::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {
 
 				// compute probability P(zq)
 				// P(eq=false)*P(zq|eq=false) + P(eq=true)*p(zq|eq=true)
-				logP += log(Pzq(q, false) * PzqGeq(zq, false) +
+		logP += log(Pzq(q, false) * PzqGeq(zq, false) +
 						Pzq(q, true) * PzqGeq(zq, true));
 			}
 			// Since naive bayes method assume each observation is independent on each other
 			// so the probability P(Z_k)=p(z_1)*p(z_2)*...*p(z_v), where v is the size of vocabulary
 			// logP = log( P(Z_k) )
 		} else {
+				
 			for (int q = 0; q < clTree.cols; q++) {
 				zq = queryImgDescriptor.at<float>(0,q) > 0;
 				zpq = queryImgDescriptor.at<float>(0,pq(q)) > 0;
@@ -279,13 +281,16 @@ double FabMap::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {
 				alpha = Pzq(q, zq) * PzqGeq(!zq, false) * PzqGzpq(q, !zq, zpq);
 				beta = Pzq(q, !zq) * PzqGeq(zq, false) * PzqGzpq(q, zq, zpq);
 				p = Pzq(q, false) * beta / (alpha + beta);
+				// P(eq=F)*P(zq|eq=F, zpq)
 
 				alpha = Pzq(q, zq) * PzqGeq(!zq, true) * PzqGzpq(q, !zq, zpq);
 				beta = Pzq(q, !zq) * PzqGeq(zq, true) * PzqGzpq(q, zq, zpq);
 				p += Pzq(q, true) * beta / (alpha + beta);
+				// P(eq=T)*P(zq|eq=T, zpq)
 
 				logP += log(p);
 			}
+			// logP = log( Product of all P(zq|zpq) including P(zr) )
 		}
 		return logP;
 	}
@@ -310,6 +315,8 @@ double FabMap::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {
 		// while averageLogLikelihood is initialized like this
 		// seems matches.front().likehood is added twice
 		// desirable?
+		// seems DBL_MAX is used for numerical reasons
+		// ???
 		double averageLogLikelihood = -DBL_MAX + matches.front().likelihood + 1;
 		for (int i = 0; i < numSamples; i++) {
 			averageLogLikelihood = 
@@ -317,6 +324,13 @@ double FabMap::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {
 		}
 
 		return averageLogLikelihood - log((double)numSamples);
+		// averageLogLikelihood = log( sum( P(Z_k| sampled_locations) ) / numSamples)
+		// seems lack the probability of new location given previous observations
+		// e.g. P(L_new|Z^{k-1})
+		// aha, maybe the author assume P(L_new|Z^{k-1})=1, so the first term of equation 3.21 in MJCThesis is ignored
+		// in MJCTheis, it is said " In practive we have found it more convenient to use random collections of images for the sampling set, so have not taken advantage of this possibility"
+		// Therefore the actual formulation for P(Z_k|Z^{k-1}) is
+		// P(Z_k|Z^{k-1})=sum( P(Z_k| sampled_locations) / numSamples
 	}
 	return 0;
 }
@@ -380,6 +394,18 @@ void FabMap::normaliseDistribution(vector<IMatch>& matches) {
 
 	} else {
 
+			// without motion modeli, term P(L_i|Z^{k-1}) is ignored
+			// thus the location likelihood is:
+			// P(L_i|Z^k)=P(Z_k|L_i,Z^{k-1})/P(Z_k|Z^{k-1})
+			// Also, since no update is done in data association, the condition Z^{k-1} can be ignored,
+			// just use probability stored in row 1 of clTree.
+			// And the new place likelihood is computed by randomly sampling.
+			// Finally, the location likelihood is:
+			// P(L_i|Z^k)=P(L_i|clTree)=P(Z_k|L_i, clTree)/P(Z_k|randomly_sampled_image_descriptors)
+			// since -DBL_MAX is so "large" that adding a term like matches.front().likelihood basically doesn't affect its vale, thus exp( logsum )=exp( -DBL_MAX )=0
+			// the assignment below is just used for initializing log of null possibility, which is log( zero ) !!
+
+
 		double logsum = -DBL_MAX + matches.front().likelihood + 1;
 
 		for (size_t i = 0; i < matches.size(); i++) {
@@ -388,6 +414,11 @@ void FabMap::normaliseDistribution(vector<IMatch>& matches) {
 		for (size_t i = 0; i < matches.size(); i++) {
 			matches[i].match = exp(matches[i].likelihood - logsum);
 		}
+		// this normalization process is just different from the MJCThesis
+		// in his paper P(Li|Z^k)= (P(Z_k|Li)*P(Li|Z^{k-1}))/P(Z_k|Z^{k-1})
+		// here we compute P0=P(new place) and Pi=P(Li|Z^k), where i runs from 1 to N
+		// thus probability of each event is
+		// Pi = Pi/ sum( Pi ), i runs from 0 to N
 		for (size_t i = 0; i < matches.size(); i++) {
 			matches[i].match = sFactor*matches[i].match +
 			(1 - sFactor)/matches.size();
@@ -400,6 +431,9 @@ int FabMap::pq(int q) {
 }
 
 double FabMap::Pzq(int q, bool zq) {
+		// compute P(zq) = P(eq)
+		// because of the data association strategy we adopted
+		// P(zq) = P(eq)
 	return (zq) ? clTree.at<double>(1,q) : 1 - clTree.at<double>(1,q);
 }
 
@@ -412,6 +446,8 @@ double FabMap::PzqGzpq(int q, bool zq, bool zpq) {
 }
 
 double FabMap::PzqGeq(bool zq, bool eq) {
+		// detector model
+		// P(zq|eq)
 	if (eq) {
 		return (zq) ? PzGe : 1 - PzGe;
 	} else {
@@ -420,7 +456,23 @@ double FabMap::PzqGeq(bool zq, bool eq) {
 }
 
 double FabMap::PeqGL(int q, bool Lzq, bool eq) {
+		// compute P(eq|Li)
+		// p(eq=s|Li) = P(eq=s, Li) / P(Li)
+		// 			= P(Li|eq=s)*P(eq=s) / [ P(Li|eq=s)*p(eq=s) + P(Li|eq!=s)*P(eq!=s) ]
+		// assume zq is independent on ep where p != q, so
+		// we can substitute Li with zq at location Li
+		// L_zq is representation of zq at Li
 	double alpha, beta;
+	// ??? weird
+	// what's stored in row 1 of clTree should be the probability of the observation z rather event e
+	// BUT the following codes show that it's e instead of z
+	// ??? p(eq) = P(zq) ???
+	// alpha = P(L_zq|eq=T)*P(zq=T) approximate using P(L_zq|eq=T)*P(eq=T) ???
+	// beta  = P(L_zq|eq=F)*P(zq=F)
+	// ACTUALLY in MJCThesis, it is said that the data association strategy is:
+	// if it's an unknown location, create a new location
+	// if it's a previously visited location, DON'T UPDATE
+	// therefore what's stored in row 1 of clTree is actually P(eq)=P(zq) and will not change in the data association process
 	alpha = PzqGeq(Lzq, true) * Pzq(q, true);
 	beta = PzqGeq(Lzq, false) * Pzq(q, false);
 
@@ -432,6 +484,8 @@ double FabMap::PeqGL(int q, bool Lzq, bool eq) {
 }
 
 double FabMap::PzqGL(int q, bool zq, bool zpq, bool Lzq) {
+		// compute p(zq|Li) under the naive bayes assumption
+		// p(zq|Li) = P(eq=F|Li)*P(zq|eq=F)+P(eq=T|Li)*P(zq|eq=T)
 	return PeqGL(q, Lzq, false) * PzqGeq(zq, false) + 
 		PeqGL(q, Lzq, true) * PzqGeq(zq, true);
 }
@@ -441,10 +495,12 @@ double FabMap::PzqGzpqL(int q, bool zq, bool zpq, bool Lzq) {
 	double p;
 	double alpha, beta;
 
+	// P(eq=F|Li)*P(zq|eq=F, zpq)
 	alpha = Pzq(q,  zq) * PzqGeq(!zq, false) * PzqGzpq(q, !zq, zpq);
 	beta  = Pzq(q, !zq) * PzqGeq( zq, false) * PzqGzpq(q,  zq, zpq);
 	p = PeqGL(q, Lzq, false) * beta / (alpha + beta);
 
+	// P(eq=T|Li)*P(zq|eq=T, zpq)
 	alpha = Pzq(q,  zq) * PzqGeq(!zq, true) * PzqGzpq(q, !zq, zpq);
 	beta  = Pzq(q, !zq) * PzqGeq( zq, true) * PzqGzpq(q,  zq, zpq);
 	p += PeqGL(q, Lzq, true) * beta / (alpha + beta);
@@ -473,8 +529,13 @@ void FabMap1::getLikelihoods(const Mat& queryImgDescriptor,
 			
 			zq = queryImgDescriptor.at<float>(0,q) > 0;
 			zpq = queryImgDescriptor.at<float>(0,pq(q)) > 0;
+			// Lzq=T then feature eq is observed at location Li
+			// otherwise feature eq is not observed at location Li
 			Lzq = testImgDescriptors[i].at<float>(0,q) > 0;
 
+			// PzGL is pointed to different functions according to
+			// naive bayes OR cltree
+			// ref line 58
 			logP += log((this->*PzGL)(q, zq, zpq, Lzq));
 
 		}

@@ -80,18 +80,38 @@ Mat ChowLiuTree::make(double infoThreshold) {
 	}
 
 	list<info> edges;
+	// create edges
+	// using mutual information between nodes
+	// while mutual information between certain nodes is 
+	// smaller than a given threshold
+	// the edge is discarded
 	createBaseEdges(edges, infoThreshold);
 
 	// TODO: if it cv_asserts here they really won't know why.
 
+	// reduce the complete graph to a maximum weight spanning tree
 	CV_Assert(reduceEdgesToMinSpan(edges));
 
+	// rearrange the data structure
+	// put the cltree in a 4-by-N matrix
+	// N is the number of visual words in the vocabulary
+	/*
+	** Configuration of cltree
+	** coordinate: (row, col)
+	** (0, q): parent index of observation q ( pq )
+	** (1, q): probability of observation q ( P(q) )
+	** (2, q): conditional probability of q given pq ( P(q=true|pq=true) )
+	** (3, q): conditional probability of q given pq( P(q=true|pq=false) )
+	*/
 	return buildTree(edges.front().word1, edges);
 }
 
 double ChowLiuTree::P(int a, bool za) {
 
 	if(za) {
+		// ??
+		// what's the function of 0.98
+		// smoothing factor??
 		return (0.98 * cv::countNonZero(mergedImgDescriptors.col(a)) / 
 			mergedImgDescriptors.rows) + 0.01;
 	} else {
@@ -116,6 +136,8 @@ double ChowLiuTree::JP(int a, bool za, int b, bool zb) {
 }
 double ChowLiuTree::CP(int a, bool za, int b, bool zb){
 
+	// total: frequency of b=zb
+	// count: frequency of b=zb and a=za
 	int count = 0, total = 0;
 	for(int i = 0; i < mergedImgDescriptors.rows; i++) {
 		if((mergedImgDescriptors.at<float>(i,b) > 0) == zb) {
@@ -128,6 +150,7 @@ double ChowLiuTree::CP(int a, bool za, int b, bool zb){
 	if(total) {
 		return (double)(0.98 * count)/total + 0.01;
 	} else {
+		// pseudo-bayes estimator??
 		return (za) ? 0.01 : 0.99;
 	}
 }
@@ -161,6 +184,14 @@ cv::Mat ChowLiuTree::buildTree(int root_word, list<info> &edges) {
 void ChowLiuTree::recAddToTree(cv::Mat &cltree, int q, int pq, 
 							   list<info>& remaining_edges) {
 
+	/*
+	** Configuration of cltree
+	** coordinate: (row, col)
+	** (0, q): parent index of observation q ( pq )
+	** (1, q): probability of observation q ( P(q) )
+	** (2, q): conditional probability of q given pq ( P(q=true|pq=true) )
+	** (3, q): conditional probability of q given pq( P(q=true|pq=false) )
+	*/
 	cltree.at<double>(0, q) = pq;
 	cltree.at<double>(1, q) = P(q, true);
 	cltree.at<double>(2, q) = CP(q, true, pq, true);
@@ -220,6 +251,9 @@ double ChowLiuTree::calcMutInfo(int word1, int word2) {
 	return accumulation;
 }
 
+// build the complete graph
+// when mutual information between two nodes is smaller than the threshold
+// discard the edge connecting these two nodes
 void ChowLiuTree::createBaseEdges(list<info>& edges, double infoThreshold) {
 
 	int nWords = imgDescriptors[0].cols;
@@ -234,6 +268,12 @@ void ChowLiuTree::createBaseEdges(list<info>& edges, double infoThreshold) {
 			edges.push_back(mutInfo);
 		}
 	}
+	// since edges is a list of info
+	// call call function to sort
+	// sortInfoScores is a comparision function
+	// in decreasing order
+	// since what we want to find is a 
+	// maximum weight spanning tree
 	edges.sort(sortInfoScores);
 }
 

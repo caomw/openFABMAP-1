@@ -46,6 +46,7 @@ namespace of2 {
 struct IMatch {
 
 	IMatch() :
+		// wtf is DBL_MAX??
 		queryIdx(-1), imgIdx(-1), likelihood(-DBL_MAX), match(-DBL_MAX) {
 	}
 	IMatch(int _queryIdx, int _imgIdx, double _likelihood, double _match) :
@@ -84,7 +85,7 @@ public:
 			int numSamples = 0);
 	virtual ~FabMap();
 
-	//methods to add training data for sampling method
+	//methods to add training data for **sampling** method
 	virtual void addTraining(const cv::Mat& queryImgDescriptor);
 	virtual void addTraining(const std::vector<cv::Mat>& queryImgDescriptors);
 
@@ -323,6 +324,11 @@ public:
 private:
 	std::vector<cv::Mat> imgDescriptors;
 	cv::Mat mergedImgDescriptors;
+
+	// data structure for edge of the complete graph
+	// word1: index of word in the vocabulary
+	// word2: index of the other word in the voc
+	// score: mutual information between two words
 
 	typedef struct info {
 		float score;

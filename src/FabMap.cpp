@@ -39,6 +39,9 @@ using cv::Mat;
 /*
 	Calculate the sum of two log likelihoods
 */
+// a = log( P1 )
+// b = log( P2 )
+// return value = log( exp(a) + exp(b) ) = log( P1 + P2 )
 double logsumexp(double a, double b) {
 	return a > b ? log(1 + exp(b - a)) + a : log(1 + exp(a - b)) + b;
 }
@@ -82,6 +85,12 @@ const std::vector<cv::Mat>& FabMap::getTestImgDescriptors() const {
 	return testImgDescriptors;
 }
 
+// addTraining is used to add image descriptors to
+// trainingImgDescriptors which is a collection of 
+// image descriptors
+// difference between the two addTraining functions below is:
+// the input arguments are different ...
+// seems a strategy for more flexible input arguments
 void FabMap::addTraining(const Mat& queryImgDescriptor) {
 	CV_Assert(!queryImgDescriptor.empty());
 	vector<Mat> queryImgDescriptors;
@@ -213,6 +222,7 @@ void FabMap::compare(const vector<Mat>& queryImgDescriptors,
 	}
 }
 
+// IMPORTANT
 void FabMap::compareImgDescriptor(const Mat& queryImgDescriptor,
 		int queryIndex, const vector<Mat>& testImgDescriptors,
 		vector<IMatch>& matches) {
@@ -220,6 +230,14 @@ void FabMap::compareImgDescriptor(const Mat& queryImgDescriptor,
 	vector<IMatch> queryMatches;
 	queryMatches.push_back(IMatch(queryIndex,-1,
 		getNewPlaceLikelihood(queryImgDescriptor),0));
+
+	// getLikelihoods compute log-likehoods of query image (stored in queryImgDescriptor) in terms of known locations ( stored in testImgDescriptors)
+	// the result is returned in queryMatches as a N-by-4 matrix
+	// each row of queryMatches represents a computation result
+	// col0: query index ( Z_k )
+	// col1: test image index (location) L_i
+	// col2: log likelihood of observation log( P( Z_k|L_i))
+	// col3: normalized probability
 	getLikelihoods(queryImgDescriptor,testImgDescriptors,queryMatches);
 	normaliseDistribution(queryMatches);
 	for (size_t j = 1; j < queryMatches.size(); j++) {
@@ -239,11 +257,19 @@ double FabMap::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {
 		bool zq, zpq;
 		if(flags & NAIVE_BAYES) {
 			for (int q = 0; q < clTree.cols; q++) {
+				// zq is the parent of q
+				// if q is the root of the cltree, its parent is itself
+				// determine whether observation zq exists in the query image 
 				zq = queryImgDescriptor.at<float>(0,q) > 0;
 
+				// compute probability P(zq)
+				// P(eq=false)*P(zq|eq=false) + P(eq=true)*p(zq|eq=true)
 				logP += log(Pzq(q, false) * PzqGeq(zq, false) +
 						Pzq(q, true) * PzqGeq(zq, true));
 			}
+			// Since naive bayes method assume each observation is independent on each other
+			// so the probability P(Z_k)=p(z_1)*p(z_2)*...*p(z_v), where v is the size of vocabulary
+			// logP = log( P(Z_k) )
 		} else {
 			for (int q = 0; q < clTree.cols; q++) {
 				zq = queryImgDescriptor.at<float>(0,q) > 0;
@@ -281,6 +307,9 @@ double FabMap::getNewPlaceLikelihood(const Mat& queryImgDescriptor) {
 		vector<IMatch> matches;
 		getLikelihoods(queryImgDescriptor,sampledImgDescriptors,matches);
 
+		// while averageLogLikelihood is initialized like this
+		// seems matches.front().likehood is added twice
+		// desirable?
 		double averageLogLikelihood = -DBL_MAX + matches.front().likelihood + 1;
 		for (int i = 0; i < numSamples; i++) {
 			averageLogLikelihood = 
@@ -438,6 +467,8 @@ void FabMap1::getLikelihoods(const Mat& queryImgDescriptor,
 	for (size_t i = 0; i < testImgDescriptors.size(); i++) {
 		bool zq, zpq, Lzq;
 		double logP = 0;
+		// logP = log( P(Z_k|L_i) )
+		// log-likelihood of the query image given location i
 		for (int q = 0; q < clTree.cols; q++) {
 			
 			zq = queryImgDescriptor.at<float>(0,q) > 0;

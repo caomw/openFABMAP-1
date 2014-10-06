@@ -229,11 +229,15 @@ protected:
 		}
 
 		int q;
-		double info;
+		double info; // info is the conditional probability P(zq|zpq)
 		mutable double V;
 		mutable double M;
 
 		bool operator<(const WordStats& w) const {
+				// used for sorting in multiset< WordStats >
+				// sort words in decreasing order of information gain which is -log( P(zq|zpq) )
+				// which is equal to increasing order of conditional probability P(zq|zpq)
+				// NOTE: multiset will automatically sort the data according to the provided comparsion function
 			return info < w.info;
 		}
 
@@ -247,7 +251,7 @@ protected:
 	static bool compInfo(const WordStats& first, const WordStats& second);
 
 	//parameters
-	double PsGd;
+	double PsGd; // P(S > delta) in equation 4.9
 	double rejectionThreshold;
 	int bisectionStart;
 	int bisectionIts;
@@ -291,16 +295,21 @@ protected:
 			std::map<int, std::vector<int> >& invertedMap);
 
 	//data
-	std::vector<double> d1, d2, d3, d4;
-	std::vector<std::vector<int> > children;
+
+	    // d1: log( P(zq=F|zpq=F, Lzq=T) / P(zq=F|zpq=F, Lzq=F) )
+	    // d2: log( P(zq=F|zpq=T, Lzq=T) / P(zq=F|zpq=T, Lzq=F) ) - d1
+		// d3: log( P(zq=T|zpq=F, Lzq=T) / P(zq=T|zpq=F, Lzq=F) ) - d1
+	    // d4: log( P(zq=T|zpq=T, Lzq=T) / P(zq=T|zpq=T, Lzq=F) ) - d1
+	std::vector<double> d1, d2, d3, d4;  // pre-computing terms
+	std::vector<std::vector<int> > children;  // records children of each node in clTree
 
 	// TODO: inverted map a vector?
 
-	std::vector<double> trainingDefaults;
-	std::map<int, std::vector<int> > trainingInvertedMap;
+	std::vector<double> trainingDefaults;  // stores the default log-likelihood of each location used for random sampling
+	std::map<int, std::vector<int> > trainingInvertedMap;   // stores word -> location maps used for random sampling
 
-	std::vector<double> testDefaults;
-	std::map<int, std::vector<int> > testInvertedMap;
+	std::vector<double> testDefaults;  // stores the default log-likelihood of each location for testing location
+	std::map<int, std::vector<int> > testInvertedMap;  // stores word -> location maps used for testing location
 
 };
 /*

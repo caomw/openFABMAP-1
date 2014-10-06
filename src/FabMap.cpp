@@ -438,6 +438,7 @@ double FabMap::Pzq(int q, bool zq) {
 }
 
 double FabMap::PzqGzpq(int q, bool zq, bool zpq) {
+		// compute P(zq|zpq)
 	if (zpq) {
 		return (zq) ? clTree.at<double>(2,q) : 1 - clTree.at<double>(2,q);
 	} else {
@@ -492,6 +493,7 @@ double FabMap::PzqGL(int q, bool zq, bool zpq, bool Lzq) {
 
 
 double FabMap::PzqGzpqL(int q, bool zq, bool zpq, bool Lzq) {
+		// compute P(zq|zpq, Li)
 	double p;
 	double alpha, beta;
 
@@ -621,11 +623,14 @@ void FabMapFBO::getLikelihoods(const Mat& queryImgDescriptor,
 
 		currBest = -DBL_MAX;
 
+		// for a fixed word compute likelihood in parallel
+		// call this PARALLEL loop
 		for (size_t i = 0; i < matchIndices.size(); i++) {
 			bool Lzq = 
 				testImgDescriptors[matchIndices[i]].at<float>(0,wordIter->q) > 0;
 			queryMatches[matchIndices[i]].likelihood +=
 				log((this->*PzGL)(wordIter->q,zq,zpq,Lzq));
+			// find current maximum likelihood
 			currBest = 
 				std::max(queryMatches[matchIndices[i]].likelihood, currBest);
 		}
@@ -633,15 +638,22 @@ void FabMapFBO::getLikelihoods(const Mat& queryImgDescriptor,
 		if (matchIndices.size() == 1)
 			continue;
 
+		// solve inequality 4.9
 		double delta = std::max(limitbisection(wordIter->V, wordIter->M), 
 			-log(rejectionThreshold));
 
 		vector<int>::iterator matchIter = matchIndices.begin();
 		while (matchIter != matchIndices.end()) {
 			if (currBest - queryMatches[*matchIter].likelihood > delta) {
+					// if the query match (test hypothesis) pointed by matchIter has very little possibility
+					// to take over the current best hypothesis
+					// Then bail-out this hypothesis
 				queryMatches[*matchIter].likelihood = bailedOut;
+					// And erase the hypothesis, which means will not compute it in the next PARALLEL loop
 				matchIter = matchIndices.erase(matchIter);
 			} else {
+					// if the query hypothesis is possible to take over the current best
+					// keep it
 				matchIter++;
 			}
 		}
@@ -669,17 +681,29 @@ void FabMapFBO::setWordStatistics(const Mat& queryImgDescriptor,
 	double d = 0, V = 0, M = 0;
 	bool zq, zpq;
 
+	// iteration in reverse order to compute
+	// (1) the sum of variation afterwards AND
+	// (2) maximum absolute of Xi afterwards
 	for (multiset<WordStats>::reverse_iterator wordIter = wordData.rbegin();
 			wordIter != wordData.rend(); wordIter++) {
 
 		zq = queryImgDescriptor.at<float>(0,wordIter->q) > 0;
 		zpq = queryImgDescriptor.at<float>(0,pq(wordIter->q)) > 0;
 
+		// d = log( P(zq|zpq, zq in Li) ) - log( P(zq|zpq, zq not in Li) )
 		d = log((this->*PzGL)(wordIter->q, zq, zpq, true)) - 
 			log((this->*PzGL)(wordIter->q, zq, zpq, false));
 
+		// v = sum( E[Xi^2] )
+		// according to equation 4.12, Xi has the distribution of:
+		// p(Xi=d)=u(1-u)
+		// P(Xi=0)=(1-u)^2+u^2
+		// P(Xi=-d)=u(1-u)
+		// Therefore E[Xi^2]=d^2*2*u(1-u)
+		// Where u is the probability of feature zq observed at location 
 		V += pow(d, 2.0) * 2 * 
 			(Pzq(wordIter->q, true) - pow(Pzq(wordIter->q, true), 2.0));
+		// M is just the maximum absolute value of Xi
 		M = std::max(M, fabs(d));
 
 		wordIter->V = V;
@@ -687,6 +711,12 @@ void FabMapFBO::setWordStatistics(const Mat& queryImgDescriptor,
 	}
 }
 
+// find solution of the inequality 4.9
+// Since P( S > delta ) < bennettInequality(v, m, delta),
+// when we solve the equation bennettInequality(v, m, delta) = PsGd ( PsGd is the user specified error? )
+// then we are sure to claim that P( S > delta ) < PsGd
+// thus the testing hypothesis has little possibility to take over the leading hypothesis ( which advances by delta )
+// Because its possibility to get more likelihood ( S ) than delta is less than PsGd, which is a user specificed small number
 double FabMapFBO::limitbisection(double v, double m) {
 	double midpoint, left_val, mid_val;
 	double left = 0, right = bisectionStart;
@@ -709,8 +739,13 @@ double FabMapFBO::limitbisection(double v, double m) {
 	return (right + left) * 0.5;
 }
 
+// computate formulation
+// exp( v / (m^2) * cosh( f( Delta ) ) - 1 - Delta * m / v * f( Delta )
 double FabMapFBO::bennettInequality(double v, double m, double delta) {
-	double DMonV = delta * m / v;
+	double DMonV = delta * m / v; 
+	// f( Delta ) = sinh^{-1}( DDelta * m / v);
+	// sinh( x ) = (e^x - e^{-x})/2
+	// sinh^{-1}( x ) = log( x + sqrt(x^2 + 1) )
 	double f_delta = log(DMonV + sqrt(pow(DMonV, 2.0) + 1));
 	return exp((v / pow(m, 2.0))*(cosh(f_delta) - 1 - DMonV * f_delta));
 }
@@ -727,14 +762,33 @@ FabMap(_clTree, _PzGe, _PzGNe, _flags) {
 	children.resize(clTree.cols);
 
 	for (int q = 0; q < clTree.cols; q++) {
+		// PzGL(q, zq, zpq, Li) =  P(zq|zpq, whether zq exists in Li)
+
+		// d1, d2, d3, d4 represent normalized likelihoods of the four conditions ( zq=F/T | zpq=F/T )
+		// the normalization term is the probability that above event happens conditioned on negative observation of zq at location i
+		// e.g. P( zq|zpq, Li=F)
+		// This term is used to be denominator because it's the most often condition that a certain feature is not observed at a given location
+		// and once normalized like this, sparse pattern could be found (i.e. lots of zeros will appear)
+
+	    // d1: log( P(zq=F|zpq=F, Lzq=T) / P(zq=F|zpq=F, Lzq=F) )
 		d1.push_back(log((this->*PzGL)(q, false, false, true) /
 				(this->*PzGL)(q, false, false, false)));
+
+		// The reason to substract d1 from d2, d3 and d4 is that
+		// in updating log-likelihood, we can simply add d2 ( or d3, d4) to the default log-likelihood
+		// and no need to substract d1 in the following computation ( which will be very often)
+		// this strategy is just used for reducing computing time
+
+	    // d2: log( P(zq=F|zpq=T, Lzq=T) / P(zq=F|zpq=T, Lzq=F) ) - d1
 		d2.push_back(log((this->*PzGL)(q, false, true, true) /
 				(this->*PzGL)(q, false, true, false)) - d1[q]);
+		// d3: log( P(zq=T|zpq=F, Lzq=T) / P(zq=T|zpq=F, Lzq=F) ) - d1
 		d3.push_back(log((this->*PzGL)(q, true, false, true) /
 				(this->*PzGL)(q, true, false, false))- d1[q]);
+	    // d4: log( P(zq=T|zpq=T, Lzq=T) / P(zq=T|zpq=T, Lzq=F) ) - d1
 		d4.push_back(log((this->*PzGL)(q, true, true, true) /
 				(this->*PzGL)(q, true, true, false))- d1[q]);
+		// children[i] records children of node i
 		children[pq(q)].push_back(q);
 	}
 
@@ -750,6 +804,7 @@ void FabMap2::addTraining(const vector<Mat>& queryImgDescriptors) {
 		CV_Assert(queryImgDescriptors[i].rows == 1);
 		CV_Assert(queryImgDescriptors[i].cols == clTree.cols);
 		CV_Assert(queryImgDescriptors[i].type() == CV_32F);
+		// add image descriptors to training set ( used for randomly sampling to compute new place likelihood )
 		trainingImgDescriptors.push_back(queryImgDescriptors[i]);
 		addToIndex(queryImgDescriptors[i], trainingDefaults, trainingInvertedMap);
 	}
@@ -757,12 +812,17 @@ void FabMap2::addTraining(const vector<Mat>& queryImgDescriptors) {
 
 
 void FabMap2::add(const vector<Mat>& queryImgDescriptors) {
+	// add test image descriptors to testImgDescriptors
+	// and compute default log-likelihoods of each location
 	for (size_t i = 0; i < queryImgDescriptors.size(); i++) {
 		CV_Assert(!queryImgDescriptors[i].empty());
 		CV_Assert(queryImgDescriptors[i].rows == 1);
 		CV_Assert(queryImgDescriptors[i].cols == clTree.cols);
 		CV_Assert(queryImgDescriptors[i].type() == CV_32F);
 		testImgDescriptors.push_back(queryImgDescriptors[i]);
+		// add image descriptors to test set ( test set is a history of previously visited locations)
+		// testDefaults stores the default likelihood of a location which is sum ( log (P(zq=F|zpq=F, zq=T) / P(zq=F|zpq=F, zq=F) ) )
+		// testInvertedMap stores the inverted map of each feature i.e. feature -> locations where feature is observed
 		addToIndex(queryImgDescriptors[i], testDefaults, testInvertedMap);
 	}
 }
@@ -778,6 +838,7 @@ void FabMap2::getLikelihoods(const Mat& queryImgDescriptor,
 		vector<double> defaults;
 		map<int, vector<int> > invertedMap;
 		for (size_t i = 0; i < testImgDescriptors.size(); i++) {
+			// compute default likelihood of the query image
 			addToIndex(testImgDescriptors[i],defaults,invertedMap);
 		}
 		getIndexLikelihoods(queryImgDescriptor, defaults, invertedMap, matches);
@@ -807,7 +868,13 @@ void FabMap2::addToIndex(const Mat& queryImgDescriptor,
 		map<int, vector<int> >& invertedMap) {
 	defaults.push_back(0);
 	for (int q = 0; q < clTree.cols; q++) {
+		// if zq exists at location L, add d1
+		// to default location log-likelihood 
 		if (queryImgDescriptor.at<float>(0,q) > 0) {
+			// if visual word zq is observed in the query image
+			// add log( P(zq=F|zpq=F, Lzq=T) / P(zq=F|zpq=F, Lzq=F) ) to the default
+			// likelihood of the new location
+			// then update? seems still need to substract this term ... so sad
 			defaults.back() += d1[q];
 			invertedMap[q].push_back((int)defaults.size()-1);
 		}
@@ -823,14 +890,21 @@ void FabMap2::getIndexLikelihoods(const Mat& queryImgDescriptor,
 
 	std::vector<double> likelihoods = defaults;
 
+	    // d1: log( P(zq=F|zpq=F, Lzq=T) / P(zq=F|zpq=F, Lzq=F) )
+	    // d2: log( P(zq=F|zpq=T, Lzq=T) / P(zq=F|zpq=T, Lzq=F) ) - d1
+		// d3: log( P(zq=T|zpq=F, Lzq=T) / P(zq=T|zpq=F, Lzq=F) ) - d1
+	    // d4: log( P(zq=T|zpq=T, Lzq=T) / P(zq=T|zpq=T, Lzq=F) ) - d1
 	for (int q = 0; q < clTree.cols; q++) {
 		if (queryImgDescriptor.at<float>(0,q) > 0) {
 			for (LwithI = invertedMap[q].begin(); 
 				LwithI != invertedMap[q].end(); LwithI++) {
 
+				// update log( P(Li|Z^k) )
 				if (queryImgDescriptor.at<float>(0,pq(q)) > 0) {
+					// += log( P(zq=T|zpq=T, Lzq=T) / P(zq=T|zpq=T, Lzq=F) ) - log( P(zq=F|zpq=F, Lzq=T) / p(zq=F|zpq=F, Lzq=F) )
 					likelihoods[*LwithI] += d4[q];
 				} else {
+					// += log( P(zq=T|zpq=F, Lzq=T) / P(zq=T|zpq=F, Lzq=F) ) - log( P(zq=F|zpq=F, Lzq=T) / p(zq=F|zpq=F, Lzq=F) )
 					likelihoods[*LwithI] += d3[q];
 				}
 			}
@@ -854,3 +928,6 @@ void FabMap2::getIndexLikelihoods(const Mat& queryImgDescriptor,
 }
 
 }
+/*
+   compute the likelihoods of all hypotheses in parallel and terminate the likelihood calculation for hypotheses that have fallen too far behind the current leading hypothesis
+   */

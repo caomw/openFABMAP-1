@@ -1,0 +1,72 @@
+[60]: cubic time complexity appearance based navigation
+Q: linear complexity in what? seems complexity O(is #voc x #location) while #voc is actually a large number?
+
+For bag-of-words model, see video google.
+For Chow-Liu treem see [24], for large data see [39] semi-external spanning tree algorithm and [92] sparse and even-large scale data.
+
+WHY equation (3.22) works?
+
+A better data association method, see [129], particle filter
+
+Independent assumptions:
+1. Sets of observations are conditionally independent given position: P(Z_k|L_i, Z^{k-1}) = P(Z_k|L_i)
+2. Detector behaviour is independent of position: P(z_q|e_q, L_i) = p(z_q|e_q)
+3. Location models are generated independently by the environment.
+
+Approximation:
+1. The existence of scene element e_q is not informed by observations other than z_q. P(e_q|Z_k) approximates P(e_q|z_{q_k})
+2. p(e_q|L_i) approximates P(e_q|z_p, L_i) when p != q
+
+WHAT is precision-recall curve?
+precision: ratio of ture positive loop closure detections to total detections
+recall: ratio of true positive loop closure detections to the number of ground ruth loop closures
+indication: how useful the sysstem would be for loop closure dtection as part of a metric SLAM system -- recall at100% precision indicates the percentage of loop closures that can be detected without any false positives that would cause filter divergence
+
+visual SLAM system [91]
+seems: correction of trajectory [110]
+
+
+
+
+disadvantages of Kalman filter based SLAM: assumption of linearity/ Gaussian noise/
+
+global image representation: sensitive to viewpoint/ light/ perspective variants
+
+interest point detector and local feature descriptor
+
+high dimensional feature vector, hard to compare -> vocabulary tree quantization and bag-of-words model ( use small integer to represent regions where feature vectors fall into )
+
+loop closure: previously localization in a known map and sensory view is guaranteed to come from somewhere within the map --- easy to solve
+
+in SLAM, sensory view might come from (1) previously visited place; or (2) unknow place -> cause of difficulty TO READ [55]
+
+**perceptual aliasing: different parts of the workspace may appear the same to the robot's sensors ( repetitive features like repeating architectual elements, e.g. brick wall, grass )
+
+TO READ: similarity matrix based method
+   drawbacks: 
+	(1) not truly probabilistic in construction so didn't integrate very smoothly into more general SLAM framework
+	(2) O(n^3)
+
+observations do occur together, they are NOT independent
+
+representation of joint probability of n discrete variables without special structure is exponential in n -> to approximate using a distribution with special structure
+
+similarity metric: KL-divergence
+
+approximate methods: 
+(1) Naive Bayes -> each variable independent on each other, ability of approximation is limited
+(2) each variable relies on at most one other variable -> tree structure, Chow-Liu tree
+(3) each variable relies on at most n other variables -> thin junction tree -> NP hard, exist approximate solution
+
+Chow-Liu tree
+best tree-structured bayesian network approximating the original distribution in sense of KL-divergence
+step#1: construct complete graph, weight of edge: mutual information between two nodes connected by the edge
+step#2: find maximum weight spanning tree
+
+reasons of introducing eq:
+(1) provide a natural framework to incorporate data from other sensors
+(2) facilitate factoring the distribution p(Z|L_i) into 
+	simple model of location;
+	AND complex model to capture the correlation between detections of appearance workds
+
+

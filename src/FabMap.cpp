@@ -771,7 +771,7 @@ FabMap(_clTree, _PzGe, _PzGNe, _flags) {
 		// and once normalized like this, sparse pattern could be found (i.e. lots of zeros will appear)
 
 	    // d1: log( P(zq=F|zpq=F, Lzq=T) / P(zq=F|zpq=F, Lzq=F) )
-		d1.push_back(log((this->*PzGL)(q, false, false, true) /
+			d1.push_back(log((this->*PzGL)(q, false, false, true) /
 				(this->*PzGL)(q, false, false, false)));
 
 		// The reason to substract d1 from d2, d3 and d4 is that

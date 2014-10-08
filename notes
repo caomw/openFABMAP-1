@@ -25,6 +25,9 @@ indication: how useful the sysstem would be for loop closure dtection as part of
 visual SLAM system [91]
 seems: correction of trajectory [110]
 
+07/10/14 TO DO:
+read [91], [110], [129]
+
 
 
 
@@ -70,3 +73,4 @@ reasons of introducing eq:
 	AND complex model to capture the correlation between detections of appearance workds
 
 
+p(eq|Li) changes from time to time -> modify the model to adapt to inverted index method

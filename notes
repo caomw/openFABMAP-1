@@ -74,3 +74,40 @@ reasons of introducing eq:
 
 
 p(eq|Li) changes from time to time -> modify the model to adapt to inverted index method
+
+
+
+title: Real-Time Visual Loop-Closure Detection
+
+Why would FAB-MAP fail after successfully detecting loop-closure along a long trajectory?
+	is it because the of the time complexity?
+
+evaluate FABMAP as "The main asset of this model is its ability to evaluate the distinctiveness of each word, thus accounting for perceptual aliasing at the word level, while its principal drawback lies in the offline process needed for model learning and dictonary computation."
+
+this model is incremental ( construct the vocabulary from time to time) while FABMAP has to compute the dependencies beforehand.
+
+title: detecting loop closure with scene sequence
+
+
+title: FastSLAM: An efficient solution to the simultaneous localization and mapping problem with unknown data association
+
+Bayes Filter:  http://en.wikipedia.org/wiki/Recursive_Bayesian_estimation [very help diagram]
+
+title: a comparison of loop closing techniques in monocular	SLAM
+map-to-map [1]: hierarchical SLAM -> mapping large loops with a single hand-held camera
+	1. variable scale geometric compatibility branch and bound (GCBB) algorithm
+	2. JCBB & active search
+
+
+image-to-image [2,4]: FABMAP
+
+image-to-map [5]: an image-to-map loop closing method for monocular SLAM 
+		The relocalisation module (ref: Real-time SLAM relocalisation) determines the pose of the camera relative to a map of point features by finding correspondences between the image and the features in the map. The pose is then determined from the correspondences using R ANSAC and the three–point–pose algorithm. 
+		TO READ:
+		1. Real-time SLAM relocalisation
+		2. Closed-form solution of absolute orientation using unit quaternions
+
+title: real-time simultaneous localisation and mapping with a single camera
+get the general idea; but not familiar with EKF
+
+title: 

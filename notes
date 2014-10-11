@@ -104,7 +104,7 @@ image-to-image [2,4]: FABMAP
 image-to-map [5]: an image-to-map loop closing method for monocular SLAM 
 		The relocalisation module (ref: Real-time SLAM relocalisation) determines the pose of the camera relative to a map of point features by finding correspondences between the image and the features in the map. The pose is then determined from the correspondences using R ANSAC and the three–point–pose algorithm. 
 		TO READ:
-		1. Real-time SLAM relocalisation
+		1. Real-time SLAM relocalisation 
 		2. Closed-form solution of absolute orientation using unit quaternions
 
 title: real-time simultaneous localisation and mapping with a single camera
